@@ -1,0 +1,136 @@
+diff -C 5 unrar-orig/cmddata.cpp unrar/cmddata.cpp
+*** unrar-orig/cmddata.cpp	2014-05-06 13:13:09.000000000 +0100
+--- unrar/cmddata.cpp	2014-06-06 14:09:49.105380963 +0100
+***************
+*** 338,347 ****
+--- 338,349 ----
+              DisableSortSolid=true;
+              break;
+            case 'H':
+              OpenShared=true;
+              break;
++           case 'E':
++             DeleteArchives=true;
+            case 'F':
+              DeleteFiles=true;
+              break;
+          }
+        break;
+***************
+*** 942,952 ****
+  #elif defined(UNRAR)
+      // UnRAR switches definition.
+      MUNRARTitle1,MRARTitle2,MCHelpCmd,MCHelpCmdE,MCHelpCmdL,
+      MCHelpCmdP,MCHelpCmdT,MCHelpCmdV,MCHelpCmdX,MCHelpSw,MCHelpSwm,
+      MCHelpSwAT,MCHelpSwAC,MCHelpSwAD,MCHelpSwAG,MCHelpSwAI,MCHelpSwAP,
+!     MCHelpSwCm,MCHelpSwCFGm,MCHelpSwCL,MCHelpSwCU,
+      MCHelpSwDH,MCHelpSwEP,MCHelpSwEP3,MCHelpSwF,MCHelpSwIDP,MCHelpSwIERR,
+      MCHelpSwINUL,MCHelpSwIOFF,MCHelpSwKB,MCHelpSwN,MCHelpSwNa,MCHelpSwNal,
+      MCHelpSwO,MCHelpSwOC,MCHelpSwOR,MCHelpSwOW,MCHelpSwP,
+      MCHelpSwPm,MCHelpSwR,MCHelpSwRI,MCHelpSwSC,MCHelpSwSL,MCHelpSwSM,
+      MCHelpSwTA,MCHelpSwTB,MCHelpSwTN,MCHelpSwTO,MCHelpSwTS,MCHelpSwU,
+--- 944,954 ----
+  #elif defined(UNRAR)
+      // UnRAR switches definition.
+      MUNRARTitle1,MRARTitle2,MCHelpCmd,MCHelpCmdE,MCHelpCmdL,
+      MCHelpCmdP,MCHelpCmdT,MCHelpCmdV,MCHelpCmdX,MCHelpSw,MCHelpSwm,
+      MCHelpSwAT,MCHelpSwAC,MCHelpSwAD,MCHelpSwAG,MCHelpSwAI,MCHelpSwAP,
+!     MCHelpSwCm,MCHelpSwCFGm,MCHelpSwCL,MCHelpSwCU, MCHelpSwDE,
+      MCHelpSwDH,MCHelpSwEP,MCHelpSwEP3,MCHelpSwF,MCHelpSwIDP,MCHelpSwIERR,
+      MCHelpSwINUL,MCHelpSwIOFF,MCHelpSwKB,MCHelpSwN,MCHelpSwNa,MCHelpSwNal,
+      MCHelpSwO,MCHelpSwOC,MCHelpSwOR,MCHelpSwOW,MCHelpSwP,
+      MCHelpSwPm,MCHelpSwR,MCHelpSwRI,MCHelpSwSC,MCHelpSwSL,MCHelpSwSM,
+      MCHelpSwTA,MCHelpSwTB,MCHelpSwTN,MCHelpSwTO,MCHelpSwTS,MCHelpSwU,
+diff -C 5 unrar-orig/extract.cpp unrar/extract.cpp
+*** unrar-orig/extract.cpp	2014-05-06 13:13:09.000000000 +0100
+--- unrar/extract.cpp	2014-06-15 22:00:17.425380993 +0100
+***************
+*** 199,208 ****
+--- 199,215 ----
+        }
+        else
+          break;
+    }
+  
++   if ((*Cmd->Command=='E' || *Cmd->Command=='X') &&
++       (Cmd->DeleteArchives == true))
++   {
++     mprintf(MUnlinking, Arc.FileName);
++     Arc.Delete();
++   }
++ 
+  
+    return EXTRACT_ARC_NEXT;
+  }
+  
+  
+diff -C 5 unrar-orig/loclang.hpp unrar/loclang.hpp
+*** unrar-orig/loclang.hpp	2014-05-06 13:13:09.000000000 +0100
+--- unrar/loclang.hpp	2014-06-06 13:57:05.313380970 +0100
+***************
+*** 59,68 ****
+--- 59,69 ----
+  #define   MCHelpSwAS         L"\n  as            Synchronize archive contents"
+  #define   MCHelpSwCm         L"\n  c-            Disable comments show"
+  #define   MCHelpSwCFGm       L"\n  cfg-          Disable read configuration"
+  #define   MCHelpSwCL         L"\n  cl            Convert names to lower case"
+  #define   MCHelpSwCU         L"\n  cu            Convert names to upper case"
++ #define   MCHelpSwDE         L"\n  de            Delete archive(s) after extracting"
+  #define   MCHelpSwDF         L"\n  df            Delete files after archiving"
+  #define   MCHelpSwDH         L"\n  dh            Open shared files"
+  #define   MCHelpSwDR         L"\n  dr            Delete files to Recycle Bin"
+  #define   MCHelpSwDS         L"\n  ds            Disable name sort for solid archive"
+  #define   MCHelpSwDW         L"\n  dw            Wipe files after archiving"
+***************
+*** 202,211 ****
+--- 203,213 ----
+  #define   MAddAnalyze        L"\nAnalyzing archived files: "
+  #define   MRepacking         L"\nRepacking archived files: "
+  #define   MCRCFailed         L"\n%-20s - checksum error"
+  #define   MExtrTest          L"\n\nTesting archive %s\n"
+  #define   MExtracting        L"\n\nExtracting from %s\n"
++ #define   MUnlinking         L"\n\nDeleting %s\n"
+  #define   MUseCurPsw         L"\n%s - use current password ?"
+  #define   MCreatDir          L"\nCreating    %-56s"
+  #define   MExtrSkipFile      L"\nSkipping    %-56s"
+  #define   MExtrTestFile      L"\nTesting     %-56s"
+  #define   MExtrFile          L"\nExtracting  %-56s"
+diff -C 5 unrar-orig/options.hpp unrar/options.hpp
+*** unrar-orig/options.hpp	2014-05-06 13:13:10.000000000 +0100
+--- unrar/options.hpp	2014-06-06 14:10:17.705381001 +0100
+***************
+*** 132,141 ****
+--- 132,142 ----
+      int Priority;
+      int SleepTime;
+      bool KeepBroken;
+      bool OpenShared;
+      bool DeleteFiles;
++     bool DeleteArchives;
+  
+  
+  #ifndef SFX_MODULE
+      bool GenerateArcName;
+      wchar GenerateMask[MAX_GENERATE_MASK];
+diff -C 5 unrar-orig/volume.cpp unrar/volume.cpp
+*** unrar-orig/volume.cpp	2014-05-06 13:13:10.000000000 +0100
+--- unrar/volume.cpp	2014-06-15 22:43:03.333381002 +0100
+***************
+*** 30,39 ****
+--- 30,45 ----
+    if (DataIO!=NULL)
+      DataIO->ProcessedArcSize+=Arc.FileLength();
+  
+  
+    Arc.Close();
++   if ((Command=='X' || Command=='E') &&
++       (Cmd->DeleteArchives == true))
++   {
++     mprintf(MUnlinking, Arc.FileName);
++     Arc.Delete();
++   }
+  
+    wchar NextName[NM];
+    wcscpy(NextName,Arc.FileName);
+    NextVolumeName(NextName,ASIZE(NextName),!Arc.NewNumbering);
+  
