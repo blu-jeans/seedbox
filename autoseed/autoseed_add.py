@@ -16,7 +16,7 @@ local_server = "127.0.0.1:58846"
 path = "/root/autoseed"
 log = open("/root/autoseed/log2.txt", 'a')
 #trigger_list = ['landof.tv']
-loop_interval = 60 # detect every 60 seconds
+#loop_interval = 60 # detect every 60 seconds
 
 
 torrent_id = ''
