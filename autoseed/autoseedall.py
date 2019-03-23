@@ -117,20 +117,6 @@ def getidbyname(name, torrents_info):
             ret.append(hx)
     return ret
 
-def save_torrent(torrent_id):
-    write_log('%s save_torrent...'%torrent_id)
-    cmd = 'cp %s.torrent %s.torrent.bk'%(torrent_id,torrent_id)
-    r = execute(cmd).strip()
-    write_log('Success')
-    print(r)
-
-def del_task(torrent_id):
-    write_log('%s del_task...'%torrent_id)
-    cmd = '/home/tobox/bin/rtxmlrpc d.erase %s'%torrent_id
-    r = execute(cmd).strip()
-    write_log('Success')
-    print(r)
-
 def re_add_start(torrent_id):
     write_log('%s re_add_start...'%torrent_id)
     cmd1 = 'mv %s.torrent.bk %s.torrent'%(torrent_id,torrent_id)
@@ -195,8 +181,6 @@ def main():
             if 'seed' not in status:
                 write_log('Start torrent %s'%hx)
                 add_recovery(hx, name)
-                save_torrent(hx)
-#                del_task(hx)
                 re_add_start(hx)
 
     write_log('Running finished.')
