@@ -93,7 +93,6 @@ def get_info():
     files = execute("ls -1 | grep -E '\.torrent$'").strip().split('\n')
     for file in files:
         name = execute("/usr/bin/transmission-show %s | grep -E ^Name:"%file).strip()[6:]
-        # hx = execute("/usr/bin/transmission-show 042B8D42A5079F5E2D3BB5004B63EA0174162AC2.torrent | grep -E Hash:").strip().split()[1]
         hx = file.strip().split('.')[0]
         ret.append((name,hx))
     return ret
@@ -119,11 +118,9 @@ def getidbyname(name, torrents_info):
 
 def re_add_start(torrent_id):
     write_log('%s re_add_start...'%torrent_id)
-    cmd1 = 'mv %s.torrent.bk %s.torrent'%(torrent_id,torrent_id)
     torrent_path = os.path.join(session_path, '%s.torrent'%torrent_id)
-    cmd2 = 'cp %s /home/tobox2/rtorrent/watch'%torrent_path 
-    write_log(execute(cmd1))
-    write_log(execute(cmd2))
+    cmd = 'cp %s /home/tobox2/rtorrent/watch'%torrent_path 
+    write_log(execute(cmd))
     write_log('Success')
 
 
